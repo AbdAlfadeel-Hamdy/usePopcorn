@@ -13,10 +13,7 @@ const MovieItem: React.FC<MovieItemProps> = ({
   onDeleteWatched,
 }) => {
   return (
-    <li
-      key={movie.imdbID}
-      onClick={onSelectMovie ? () => onSelectMovie(movie.imdbID) : undefined}
-    >
+    <li key={movie.imdbID} onClick={() => onSelectMovie?.(movie.imdbID)}>
       <img src={movie.poster} alt={`${movie.title} poster`} />
       <h3>{movie.title}</h3>
       {'runtime' in movie ? (
@@ -35,9 +32,7 @@ const MovieItem: React.FC<MovieItemProps> = ({
           </p>
           <button
             className='btn-delete'
-            onClick={
-              onDeleteWatched ? () => onDeleteWatched(movie.imdbID) : undefined
-            }
+            onClick={() => onDeleteWatched?.(movie.imdbID)}
           >
             X
           </button>

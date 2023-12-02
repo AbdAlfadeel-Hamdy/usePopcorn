@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import StarRating from './StarRating';
 import { Loader, ErrorMessage } from '.';
 import { IMdbMovie, WatchedMovie } from '../types/Movie';
 import { API_KEY } from '../utils/constants';
+import { useKey } from '../hooks/useKey';
 
 interface MovieDetailsProps {
   selectedId: string;
@@ -21,6 +22,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [userRating, setUserRating] = useState<number | null>(null);
+  const countRef = useRef(0);
   // Check Movie is already Rated
   const watchedUserRating = watched.find(
     (movie) => movie.imdbID === selectedId
@@ -37,6 +39,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
         runtime: +movie.Runtime.split(' ')[0],
         imdbRating: +movie.imdbRating,
         userRating,
+        countRatingDecisions: countRef.current,
       };
     if (watchedMovie) onAddWatched(watchedMovie);
     onCloseMovie();
@@ -71,15 +74,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
     };
   }, [movie?.Title]);
   // Listen for the Escape Key
-  useEffect(() => {
-    const callback: EventListener = function (this: Document, e: Event) {
-      if ('code' in e && e.code === 'Escape') onCloseMovie();
-    };
-    document.addEventListener('keydown', callback);
-    return () => {
-      document.removeEventListener('keydown', callback);
-    };
-  }, [onCloseMovie]);
+  useKey('Escape', onCloseMovie);
 
   return (
     <div className='details'>
@@ -117,7 +112,10 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
                   <StarRating
                     maxRating={10}
                     size={24}
-                    onSetRating={setUserRating}
+                    onSetRating={(rating) => {
+                      countRef.current++;
+                      setUserRating(rating);
+                    }}
                   />
                   {userRating && (
                     <button className='btn-add' onClick={handleAdd}>
