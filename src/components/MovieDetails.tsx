@@ -51,7 +51,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
       setError(null);
       try {
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedId}`
+          `https://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedId}`
         );
         if (!res.ok)
           throw new Error('Something went wrong with fetching the movie');
